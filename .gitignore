@@ -1,0 +1,10 @@
+Image.o
+main.o
+pile.o
+plot
+Ppm.o
+utils.o
+.vscode/configurationCache.log
+.vscode/dryrun.log
+.vscode/settings.json
+.vscode/targets.log
