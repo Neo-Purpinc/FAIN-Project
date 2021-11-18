@@ -182,7 +182,6 @@ void I_changeColor(Image *img, Color c)
 
 void I_plot(Image *img, int x, int y)
 {
-	printf("%d %d\n",x,y);
 	if((x>=0)&&(x<img->_width)&&
 	   (y>=0)&&(y<img->_height))
 		img->_buffer[x][y] = img->_current_color;
@@ -356,6 +355,7 @@ void premierOctantToZ2(int xA, int yA, int xB, int yB, int x_1O, int y_1O, int *
 	*x = x_1q;
 	*y = y_1q;
 }
+
 void I_bresenham(Image *img, int xA, int yA, int xB, int yB){
 	int xA_1O, yA_1O, xB_1O, yB_1O;
 	z2ToPremierOctant(xA,yA,xB,yB, &xA_1O, &yA_1O, &xB_1O, &yB_1O);
@@ -367,7 +367,7 @@ void I_bresenham(Image *img, int xA, int yA, int xB, int yB){
 	int x_tmp, y_tmp;
 	while(x < xB_1O){
 		premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
-		I_plot(img, x_tmp, y_tmp);
+		I_plot(img, abs(x_tmp), abs(y_tmp));
 		x++;
 		if(d<0)
 			d += incrd1;
@@ -377,7 +377,7 @@ void I_bresenham(Image *img, int xA, int yA, int xB, int yB){
 		}
 	}
 	premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
-	I_plot(img, x_tmp, y_tmp);
+	I_plot(img, abs(x_tmp), abs(y_tmp));
 }
 void I_copy(Image *image,Image *sortie){
 	int i,j;
@@ -477,5 +477,8 @@ void relierPoint(Image *img, Liste l){
 		I_bresenham(img,courant->point.x,courant->point.y,follow->point.x,follow->point.y);
 		courant = courant->suivant;
 	}
-
+}
+// Create a function that fill a polygon with scanline algorithm
+void scanLine(Image *img, Liste l){
+	
 }

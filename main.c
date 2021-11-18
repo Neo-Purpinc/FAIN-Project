@@ -48,12 +48,12 @@ void mouse_CB(int button, int state, int x, int y)
 		ajouterPointFin(liste, new_Point(x,img->_height-y));
 		afficherListe(liste);
 		relierPoint(img,liste);
-		current = out;
-	}
-	else if ((button==GLUT_LEFT_BUTTON)&&(state==GLUT_UP))
-	{
 		current = img;
 	}
+	// else if ((button==GLUT_LEFT_BUTTON)&&(state==GLUT_UP))
+	// {
+	// 	current = img;
+	// }
 	glutPostRedisplay();
 }
 
