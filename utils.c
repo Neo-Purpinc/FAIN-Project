@@ -98,3 +98,12 @@ void afficherListe(Liste l){
     }
     printf("\n");
 }
+int size(Liste l){
+    int i = 0;
+    ElementListe courant = l->premier;
+    while(courant != NULL){
+        i++;
+        courant = courant->suivant;
+    }
+    return i;
+}

@@ -61,9 +61,7 @@ void mouse_CB(int button, int state, int x, int y)
 // Cette fonction permet de réagir au fait que l'utilisateur
 // presse une touche (non-spéciale) du clavier.
 //------------------------------------------------------------------
-void toggleClosed(Image *image,Image *sortie, Liste liste){
 
-}
 void keyboard_CB(unsigned char key, int x, int y)
 {
 	switch(key)
@@ -73,7 +71,7 @@ void keyboard_CB(unsigned char key, int x, int y)
 	case 'Z' : I_zoom(current,0.5); break;
 	case 'i' : I_zoomInit(current); break;
 	case 'c' :
-		if(current == img)
+		if(current == img && size(liste) > 0)
 		{
 			I_copy(img,out);
 			I_bresenham(out,liste->dernier->point.x,liste->dernier->point.y,liste->premier->point.x,liste->premier->point.y);

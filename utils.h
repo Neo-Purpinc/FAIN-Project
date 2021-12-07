@@ -58,4 +58,5 @@ int is_empty_liste(Liste liste);
 void ajouterPointDebut(Liste liste,Point p);
 void ajouterPointFin(Liste liste,Point p);
 void afficherListe(Liste liste);
+int size(Liste l);
 #endif
