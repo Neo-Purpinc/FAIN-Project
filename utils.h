@@ -3,7 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/gl.h>
+#include <stdbool.h>
+#include "Image.h"
 
 // STRUCTURES
 // - Point
@@ -48,13 +49,13 @@ Point new_Point(int x,int y);
 
 // - Pile
 Pile new_Pile();
-int is_empty(Pile pile);
+bool is_empty(Pile pile);
 void empiler(Pile pile, Point p);
 Point depiler(Pile pile);
 
 // - Liste
 Liste new_Liste();
-int is_empty_liste(Liste liste);
+bool is_empty_liste(Liste liste);
 void ajouterPointDebut(Liste liste,Point p);
 void ajouterPointFin(Liste liste,Point p);
 void afficherListe(Liste liste);

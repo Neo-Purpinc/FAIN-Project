@@ -12,6 +12,7 @@
 
 #include "Ppm.h"
 #include "utils.h"
+
 //-----------------------------------------------------
 
 typedef struct
@@ -37,6 +38,7 @@ typedef struct
 Image* I_new(int _width, int _height);
 Image* I_read(char *ppmfilename);
 void I_copy(Image *image,Image *sortie);
+
 void I_fill       (Image *img, Color c);
 void I_checker    (Image *img, Color c1, Color c2, int step);
 
@@ -57,11 +59,9 @@ void I_remplissage4(Image *img_in, Image *img_out, int x_germe, int y_germe);
 void I_remplissage8(Image *img_in, Image *img_out, int x_germe, int y_germe);
 
 Color getColor(Image *img, int x, int y);
-int equalColors(Color a, Color b);
+bool equalColors(Color a, Color b);
+bool isInImage(Image *img, int x, int y);
 
-int isInImage(Image *img, int x, int y);
-
-void relierPoint(Image *img, Liste l);
 #endif
 
 

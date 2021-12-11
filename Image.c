@@ -289,6 +289,13 @@ void I_draw(Image *img)
 
 //------------------------------------------------------------------------
 
+void I_copy(Image *image,Image *sortie){
+	int i,j;
+	for(i=0;i<image->_width;i++)
+		for(j=0;j<image->_height;j++)
+			sortie->_buffer[i][j] = image->_buffer[i][j];
+}
+
 void I_bresenhamOrigin(Image *img, int x, int y){
 	I_changeColor(img,C_new(0,0,0));
 	Color white = C_new(255,255,255);
@@ -379,35 +386,8 @@ void I_bresenham(Image *img, int xA, int yA, int xB, int yB){
 	premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
 	I_plot(img, abs(x_tmp), abs(y_tmp));
 }
-void I_copy(Image *image,Image *sortie){
-	int i,j;
-	for(i=0;i<image->_width;i++)
-		for(j=0;j<image->_height;j++)
-			sortie->_buffer[i][j] = image->_buffer[i][j];
-}
-Color getColor(Image *img, int x, int y){
-	Color c;
-	if(isInImage(img,x,y))
-		c = img->_buffer[x][y];
-	else
-		c = C_new(0,0,0);
-	return c;
-}
-int isInImage(Image *img, int x, int y){
-	int bool = 0;
-	if((x>=0)&&(x<img->_width)&&
-	   (y>=0)&&(y<img->_height))
-		bool = 1;
-	return bool;
-}
-int equalColors(Color a, Color b){
-	int bool = 0;
-	if((a._red==b._red)&&
-	   (a._green==b._green)&&
-	   (a._blue==b._blue))
-		bool = 1;
-	return bool;
-}
+
+
 void I_remplissage4(Image *img_in, Image *img_out, int x_germe, int y_germe){
 	I_copy(img_in, img_out);
 	Color couleur_germe = getColor(img_in,x_germe,y_germe);
@@ -431,7 +411,6 @@ void I_remplissage4(Image *img_in, Image *img_out, int x_germe, int y_germe){
 			empiler(pile,new_Point(p.x-1,p.y));
 	}
 }
-
 void I_remplissage8(Image *img_in, Image *img_out, int x_germe, int y_germe){
 	I_copy(img_in, img_out);
 	Color couleur_germe = getColor(img_in,x_germe,y_germe);
@@ -467,18 +446,28 @@ void I_remplissage8(Image *img_in, Image *img_out, int x_germe, int y_germe){
 			empiler(pile,new_Point(p.x-1,p.y-1));
 	}
 }
-// draw Polygone with I_bresenham algorithm and a list of points
 
-
-void relierPoint(Image *img, Liste l){
-	ElementListe courant = l->premier;
-	while(courant->suivant != NULL){
-		ElementListe follow = courant->suivant;
-		I_bresenham(img,courant->point.x,courant->point.y,follow->point.x,follow->point.y);
-		courant = courant->suivant;
-	}
+Color getColor(Image *img, int x, int y){
+	Color c;
+	if(isInImage(img,x,y))
+		c = img->_buffer[x][y];
+	else
+		c = C_new(0,0,0);
+	return c;
 }
-// Create a function that fill a polygon with scanline algorithm
-void scanLine(Image *img, Liste l){
-	
+bool equalColors(Color a, Color b){
+	bool rep = false;
+	if((a._red==b._red)&&
+	   (a._green==b._green)&&
+	   (a._blue==b._blue))
+		rep = true;
+	return rep;
+}
+
+bool isInImage(Image *img, int x, int y){
+	bool rep = false;
+	if((x>=0)&&(x<img->_width)&&
+	   (y>=0)&&(y<img->_height))
+		rep = true;
+	return rep;
 }

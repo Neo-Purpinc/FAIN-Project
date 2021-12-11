@@ -13,12 +13,8 @@ Pile new_Pile()
     return p;
 }
 
-int is_empty(Pile pile){
-    int bool = 0;
-    if(pile->premier == NULL){
-        bool = 1;
-    }
-    return bool;
+bool is_empty(Pile pile){
+    return pile->premier == NULL;
 }
 void empiler(Pile pile, Point p)
 {
@@ -48,12 +44,8 @@ Liste new_Liste(){
     return l;
 }
 
-int is_empty_liste(Liste l){
-    int bool = 0;
-    if(l->premier == NULL){
-        bool = 1;
-    }
-    return bool;
+bool is_empty_liste(Liste l){
+    return l->premier == NULL;
 }
 
 void ajouterPointFin(Liste l, Point p){
