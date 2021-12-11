@@ -20,6 +20,8 @@
 
 Image *img, *original;
 Polygone polygone;
+enum mode { INSERT, VERTEX, EDGE };
+enum mode mode = INSERT;
 //------------------------------------------------------------------
 //	C'est le display callback. A chaque fois qu'il faut
 //	redessiner l'image, c'est cette fonction qui est
@@ -45,8 +47,17 @@ void mouse_CB(int button, int state, int x, int y)
 	if((button==GLUT_LEFT_BUTTON)&&(state==GLUT_DOWN))
 	{
 		I_focusPoint(img,x,img->_height-y);
-		addPoint(polygone,new_Point(x,img->_height-y));
-		drawPolygone(img,polygone);
+		switch(mode){
+			case INSERT:
+				addPoint(polygone,new_Point(x,img->_height-y));
+				drawPolygone(img,polygone);
+			break;
+			case VERTEX:
+			break;
+			case EDGE:
+			break;
+		}
+		
 	}
 	glutPostRedisplay();
 }
@@ -63,7 +74,9 @@ void keyboard_CB(unsigned char key, int x, int y)
 		case 27 : exit(1); break;
 		case 'z' : I_zoom(img,2.0); break;
 		case 'Z' : I_zoom(img,0.5); break;
-		case 'i' : I_zoomInit(img); break;
+		case 'i' : I_zoomInit(img); mode = INSERT; break;
+		case 'v' : mode = VERTEX; break;
+		case 'e' : mode = EDGE; break;
 		case 'c' : 
 			if(!isPolygoneEmpty(polygone))
 			{
@@ -127,8 +140,7 @@ int main(int argc, char **argv)
 			img = original;
 		}
 		int windowPosX = 2000, windowPosY = 700;
-		polygone = createPolygone()
-		;
+		polygone = createPolygone();
 		glutInitWindowSize(largeur,hauteur);
 		glutInitWindowPosition(windowPosX,windowPosY);
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE );

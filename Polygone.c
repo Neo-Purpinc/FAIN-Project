@@ -61,3 +61,45 @@ void drawBrokenLine(Image *img, Polygone p){
 		courant = courant->suivant;
 	}
 }
+
+float distance(int x1, int y1, int x2, int y2){
+    return sqrt(pow(x1-x2,2)+pow(y1-y2,2));
+}
+int minimum(int a, int b){
+    if(a < b)
+        return a;
+    return b;
+}
+
+int closestVertex(int x, int y, Polygone p){
+    ElementListe courant = p->points->premier;
+    float min = distance(x,y,courant->point.x,courant->point.y);
+    int index = 0;
+    while(courant->suivant != NULL){
+        ElementListe follow = courant->suivant;
+        float dist = distance(x,y,follow->point.x,follow->point.y);
+        if(dist < min){
+            min = dist;
+            index = follow->index;
+        }
+        courant = courant->suivant;
+    }
+    return index;
+}
+
+int closestEdge(int x, int y, Polygone p){
+    ElementListe courant = p->points->premier;
+    float min = distance(x,y,courant->point.x,courant->point.y);
+    int index = 0,index2 = 0;
+    while(courant->suivant != NULL){
+        ElementListe follow = courant->suivant;
+        float dist = distance(x,y,follow->point.x,follow->point.y);
+        if(dist < min){
+            index2 = index;
+            min = dist;
+            index = follow->index;
+        }
+        courant = courant->suivant;
+    }
+    return (minimum(index,index2));
+}

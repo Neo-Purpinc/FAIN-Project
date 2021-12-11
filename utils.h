@@ -32,6 +32,7 @@ typedef struct StructElementListe StructElementListe;
 struct StructElementListe
 {
     Point point;
+    int index;
     StructElementListe *precedent;
     StructElementListe *suivant;
 };
@@ -59,5 +60,6 @@ bool is_empty_liste(Liste liste);
 void ajouterPointDebut(Liste liste,Point p);
 void ajouterPointFin(Liste liste,Point p);
 void afficherListe(Liste liste);
+void removePoint(Liste liste,Point p);
 int size(Liste l);
 #endif

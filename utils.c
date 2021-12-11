@@ -53,6 +53,7 @@ void ajouterPointFin(Liste l, Point p){
     if (l == NULL || nouveau == NULL)
         exit(EXIT_FAILURE);
     nouveau->point = p;
+    nouveau->index = size(l);
     nouveau->suivant = NULL;
     nouveau->precedent = l->dernier; // peut être null
     if(l->premier == NULL){
