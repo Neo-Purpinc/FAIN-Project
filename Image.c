@@ -387,7 +387,29 @@ void I_bresenham(Image *img, int xA, int yA, int xB, int yB){
 	I_plot(img, abs(x_tmp), abs(y_tmp));
 }
 
-
+void I_bresenhamColor(Image *img, int xA, int yA, int xB, int yB, Color c){
+	int xA_1O, yA_1O, xB_1O, yB_1O;
+	z2ToPremierOctant(xA,yA,xB,yB, &xA_1O, &yA_1O, &xB_1O, &yB_1O);
+	I_changeColor(img, c);
+	int dx = xB_1O - xA_1O, dy = yB_1O - yA_1O;
+	int incrd1 = 2*dy, incrd2 = 2*(dy-dx);
+	int d = 2*dy-dx;
+	int x = xA_1O, y = yA_1O;
+	int x_tmp, y_tmp;
+	while(x < xB_1O){
+		premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
+		I_plot(img, abs(x_tmp), abs(y_tmp));
+		x++;
+		if(d<0)
+			d += incrd1;
+		else{
+			y++;
+			d += incrd2;
+		}
+	}
+	premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
+	I_plot(img, abs(x_tmp), abs(y_tmp));
+}
 void I_remplissage4(Image *img_in, Image *img_out, int x_germe, int y_germe){
 	I_copy(img_in, img_out);
 	Color couleur_germe = getColor(img_in,x_germe,y_germe);

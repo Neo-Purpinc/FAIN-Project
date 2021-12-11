@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "Image.h"
 
+enum mode { INSERT, VERTEX, EDGE };
 // STRUCTURES
 // - Point
 typedef struct {
@@ -42,12 +43,14 @@ typedef struct
 {
     ElementListe premier;
     ElementListe dernier;
+    ElementListe selected;
+    int taille;
 } StructListe, *Liste;
 
 // FONCTIONS
 // - Point
 Point new_Point(int x,int y);
-
+bool equalPoints(Point p1, Point p2);
 // - Pile
 Pile new_Pile();
 bool is_empty(Pile pile);
@@ -62,4 +65,6 @@ void ajouterPointFin(Liste liste,Point p);
 void afficherListe(Liste liste);
 void removePoint(Liste liste,Point p);
 int size(Liste l);
+Liste sortListeByX(Liste l);
+Liste sortListeByY(Liste l);
 #endif

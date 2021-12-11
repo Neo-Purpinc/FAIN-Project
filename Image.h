@@ -55,6 +55,7 @@ void I_draw       (Image *img);
 
 void I_bresenhamOrigin(Image *img, int x, int y);
 void I_bresenham(Image *img, int xA, int yA, int xB, int yB);
+void I_bresenhamColor(Image *img, int xA, int yA, int xB, int yB, Color c);
 void I_remplissage4(Image *img_in, Image *img_out, int x_germe, int y_germe);
 void I_remplissage8(Image *img_in, Image *img_out, int x_germe, int y_germe);
 

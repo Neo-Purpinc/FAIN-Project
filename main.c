@@ -20,7 +20,7 @@
 
 Image *img, *original;
 Polygone polygone;
-enum mode { INSERT, VERTEX, EDGE };
+
 enum mode mode = INSERT;
 //------------------------------------------------------------------
 //	C'est le display callback. A chaque fois qu'il faut
@@ -50,9 +50,12 @@ void mouse_CB(int button, int state, int x, int y)
 		switch(mode){
 			case INSERT:
 				addPoint(polygone,new_Point(x,img->_height-y));
-				drawPolygone(img,polygone);
+				if(polygone->isFilled)
+					toggleFilled(polygone);
+				drawPolygone(img,polygone,mode);
 			break;
 			case VERTEX:
+				drawPolygone(img,polygone,mode);
 			break;
 			case EDGE:
 			break;
@@ -75,17 +78,29 @@ void keyboard_CB(unsigned char key, int x, int y)
 		case 'z' : I_zoom(img,2.0); break;
 		case 'Z' : I_zoom(img,0.5); break;
 		case 'i' : I_zoomInit(img); mode = INSERT; break;
-		case 'v' : mode = VERTEX; break;
-		case 'e' : mode = EDGE; break;
+		case 'v' : 
+			mode = VERTEX;
+		break;
+		case 'e' :
+			mode = EDGE;
+			selectPreviousPoint(polygone);
+		break;
+		case 'f' : 
+			if(!isPolygoneEmpty(polygone)){
+				toggleFilled(polygone);
+			}
 		case 'c' : 
 			if(!isPolygoneEmpty(polygone))
 			{
 				toggleClosed(polygone);
-				drawPolygone(img,polygone);
 			}
+		break;
+		case 127:
+			removeSelectedPoint(polygone);
 		break;
 		default : fprintf(stderr,"keyboard_CB : %d : unknown key.\n",key);
 	}
+	drawPolygone(img,polygone,mode);
 	glutPostRedisplay();
 }
 
@@ -103,12 +118,40 @@ void special_CB(int key, int x, int y)
 
 	switch(key)
 	{
-	case GLUT_KEY_UP    : I_move(img,0,d); break;
-	case GLUT_KEY_DOWN  : I_move(img,0,-d); break;
-	case GLUT_KEY_LEFT  : I_move(img,d,0); break;
-	case GLUT_KEY_RIGHT : I_move(img,-d,0); break;
+	case GLUT_KEY_UP    : 
+		// I_move(img,0,d);
+		if(mode==VERTEX)
+			deplacerSelectedPoint(polygone,0,d);
+		break;
+	case GLUT_KEY_DOWN  :
+		// I_move(img,0,-d);
+		if(mode==VERTEX)
+			deplacerSelectedPoint(polygone,0,-d);
+		break;
+	case GLUT_KEY_LEFT  : 
+		// I_move(img,d,0);
+		if(mode==VERTEX)
+			deplacerSelectedPoint(polygone,-d,0);
+		break;
+	case GLUT_KEY_RIGHT :
+		// I_move(img,-d,0);
+		if(mode==VERTEX)
+			deplacerSelectedPoint(polygone,d,0);
+		break;
+	case 104:
+		if(mode==VERTEX || mode==EDGE){
+			selectNextPoint(polygone);
+		}
+	break;
+	case 105:
+		if(mode==VERTEX || mode==EDGE){
+			selectPreviousPoint(polygone);
+			
+		}
+	break;
 	default : fprintf(stderr,"special_CB : %d : unknown key.\n",key);
 	}
+	drawPolygone(img,polygone,mode); 
 	glutPostRedisplay();
 }
 
