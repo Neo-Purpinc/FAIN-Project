@@ -21,7 +21,7 @@
 Image *img, *original;
 Polygone polygone;
 
-enum mode mode = INSERT;
+
 //------------------------------------------------------------------
 //	C'est le display callback. A chaque fois qu'il faut
 //	redessiner l'image, c'est cette fonction qui est
@@ -47,21 +47,33 @@ void mouse_CB(int button, int state, int x, int y)
 	if((button==GLUT_LEFT_BUTTON)&&(state==GLUT_DOWN))
 	{
 		I_focusPoint(img,x,img->_height-y);
-		switch(mode){
+		switch(getMode(polygone)){
 			case INSERT:
 				addPoint(polygone,new_Point(x,img->_height-y));
 				if(polygone->isFilled)
 					toggleFilled(polygone);
-				drawPolygone(img,polygone,mode);
 			break;
 			case VERTEX:
-				drawPolygone(img,polygone,mode);
 			break;
 			case EDGE:
 			break;
 		}
 		
 	}
+	else if(button==GLUT_MIDDLE_BUTTON && state==GLUT_DOWN)
+	{
+		I_focusPoint(img,x,img->_height-y);
+		switch(getMode(polygone)){
+			case EDGE:
+			createPointBetweenTwoPoints(polygone);
+			break;
+			case VERTEX:
+			break;
+			case INSERT:
+			break;
+		}
+	}
+	drawPolygone(img,polygone);
 	glutPostRedisplay();
 }
 
@@ -77,12 +89,12 @@ void keyboard_CB(unsigned char key, int x, int y)
 		case 27 : exit(1); break;
 		case 'z' : I_zoom(img,2.0); break;
 		case 'Z' : I_zoom(img,0.5); break;
-		case 'i' : I_zoomInit(img); mode = INSERT; break;
+		case 'i' : I_zoomInit(img); setMode(polygone,INSERT); break;
 		case 'v' : 
-			mode = VERTEX;
+			setMode(polygone,VERTEX);
 		break;
 		case 'e' :
-			mode = EDGE;
+			setMode(polygone,EDGE);
 			selectPreviousPoint(polygone);
 		break;
 		case 'f' : 
@@ -93,6 +105,8 @@ void keyboard_CB(unsigned char key, int x, int y)
 			if(!isPolygoneEmpty(polygone))
 			{
 				toggleClosed(polygone);
+				if(!polygone->isClosed && polygone->points->selected == polygone->points->dernier)
+					selectNextPoint(polygone);
 			}
 		break;
 		case 127:
@@ -100,7 +114,7 @@ void keyboard_CB(unsigned char key, int x, int y)
 		break;
 		default : fprintf(stderr,"keyboard_CB : %d : unknown key.\n",key);
 	}
-	drawPolygone(img,polygone,mode);
+	drawPolygone(img,polygone);
 	glutPostRedisplay();
 }
 
@@ -120,38 +134,43 @@ void special_CB(int key, int x, int y)
 	{
 	case GLUT_KEY_UP    : 
 		// I_move(img,0,d);
-		if(mode==VERTEX)
+		if(getMode(polygone)==VERTEX)
 			deplacerSelectedPoint(polygone,0,d);
 		break;
 	case GLUT_KEY_DOWN  :
 		// I_move(img,0,-d);
-		if(mode==VERTEX)
+		if(getMode(polygone)==VERTEX)
 			deplacerSelectedPoint(polygone,0,-d);
 		break;
 	case GLUT_KEY_LEFT  : 
 		// I_move(img,d,0);
-		if(mode==VERTEX)
+		if(getMode(polygone)==VERTEX)
 			deplacerSelectedPoint(polygone,-d,0);
 		break;
 	case GLUT_KEY_RIGHT :
 		// I_move(img,-d,0);
-		if(mode==VERTEX)
+		if(getMode(polygone)==VERTEX)
 			deplacerSelectedPoint(polygone,d,0);
 		break;
 	case 104:
-		if(mode==VERTEX || mode==EDGE){
+		if(getMode(polygone)==VERTEX || getMode(polygone)==EDGE){
+			Point p = polygone->points->selected->point;
 			selectNextPoint(polygone);
+			if(getMode(polygone)==VERTEX && polygone->points->selected == polygone->points->dernier->precedent && equalPoints(p,polygone->points->selected->point))
+				selectLastPoint(polygone);
 		}
 	break;
 	case 105:
-		if(mode==VERTEX || mode==EDGE){
+		if(getMode(polygone)==VERTEX || getMode(polygone)==EDGE){
+			Point p = polygone->points->selected->point;
 			selectPreviousPoint(polygone);
-			
+			if(getMode(polygone)==VERTEX && polygone->points->selected == polygone->points->dernier->precedent && equalPoints(p,polygone->points->selected->point))
+				selectLastPoint(polygone);
 		}
 	break;
 	default : fprintf(stderr,"special_CB : %d : unknown key.\n",key);
 	}
-	drawPolygone(img,polygone,mode); 
+	drawPolygone(img,polygone); 
 	glutPostRedisplay();
 }
 

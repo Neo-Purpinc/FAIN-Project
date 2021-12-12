@@ -5,6 +5,7 @@ Polygone createPolygone() {
     p->isClosed = false;
     p->isFilled = false;
     p->points = new_Liste();
+    p->mode = INSERT;
     return p;
 }
 
@@ -233,22 +234,22 @@ void drawPolygoneClosed(Image *img, Polygone p){
     else
         drawPolygoneBordered(img,p);
 }
-void drawPolygone(Image *img, Polygone p, enum mode mode){
+void drawPolygone(Image *img, Polygone p){
     I_fill(img,C_new(0,0,0));
     if(p->isClosed)
         drawPolygoneClosed(img,p);
     else
         drawBrokenLine(img,p);
-    if(mode == VERTEX)
+    if(getMode(p) == VERTEX)
         drawSelectedPoint(img,p);
-    else if(mode == EDGE)
+    else if(getMode(p) == EDGE)
         drawSelectedEdge(img,p);
 }
 
 void selectNextPoint(Polygone p){
     if(p->points->selected->suivant != NULL){
         p->points->selected = p->points->selected->suivant;
-        if(!p->isClosed && p->points->selected->suivant == NULL)
+        if(!p->isClosed && p->points->selected->suivant == NULL && getMode(p) == EDGE)
             p->points->selected = p->points->premier;
     }
     else{
@@ -260,7 +261,7 @@ void selectPreviousPoint(Polygone p){
     if(p->points->selected->precedent != NULL)
         p->points->selected = p->points->selected->precedent;
     else{
-        if(!p->isClosed)
+        if(!p->isClosed && getMode(p) == EDGE)
             p->points->selected = p->points->dernier->precedent;
         else
             p->points->selected = p->points->dernier;
@@ -289,4 +290,34 @@ void removeSelectedPoint(Polygone p){
 void deplacerSelectedPoint(Polygone p, int dx, int dy){
     p->points->selected->point.x += dx;
     p->points->selected->point.y += dy;
+}
+Point getPointBetweenTwoPoints(Point a, Point b){
+    Point p;
+    p.x = (a.x+b.x)/2;
+    p.y = (a.y+b.y)/2;
+    return p;
+}
+void createPointBetweenTwoPoints(Polygone p){
+    ElementListe courant = p->points->selected;
+    ElementListe follow = courant->suivant;
+    ElementListe newPoint = malloc(sizeof(ElementListe));
+    newPoint->point = getPointBetweenTwoPoints(courant->point,follow->point);
+    newPoint->suivant = follow;
+    newPoint->precedent = courant;
+    newPoint->index = p->points->taille;
+    courant->suivant = newPoint;
+    follow->precedent = newPoint;
+    p->points->taille++;
+}
+
+void selectLastPoint(Polygone p){
+    p->points->selected = p->points->dernier;
+}
+
+void setMode(Polygone p, enum mode mode){
+    p->mode = mode;
+}
+
+enum mode getMode(Polygone p){
+    return p->mode;
 }
