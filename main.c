@@ -102,13 +102,16 @@ void keyboard_CB(unsigned char key, int x, int y)
 		case 'f' : 
 			if(!isPolygoneEmpty(polygone)){
 				toggleFilled(polygone);
+				if(!polygone->isClosed && polygone->isFilled)
+					toggleClosed(polygone);
 			}
+		break;
 		case 'c' :
 			if(!isPolygoneEmpty(polygone))
 			{
 				toggleClosed(polygone);
 				if(!polygone->isClosed && polygone->points->selected == polygone->points->dernier && getMode(polygone) == EDGE)
-					selectNextPoint(polygone);
+					selectPreviousPoint(polygone);
 			}
 		break;
 		case 127:
@@ -130,7 +133,7 @@ void special_CB(int key, int x, int y)
 {
 	// int mod = glutGetModifiers();
 
-	int d = 10;
+	int d = 5;
 
 	switch(key)
 	{

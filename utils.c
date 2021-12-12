@@ -106,66 +106,40 @@ bool equalPoints(Point p1, Point p2){
     return p1.x == p2.x && p1.y == p2.y;
 }
 // Create a function insertByX that insert a Point p in an Liste l by its position x ascending
-Liste insertByX(Liste l, Point p){
-    if(is_empty_liste(l)){
-        printf("insertByX: Liste vide");
-        ajouterPointFin(l, p);
-        return l;
+void insertByX(Liste l, Point p){
+    ElementListe courant = l->premier;
+    while(courant != NULL && courant->point.x < p.x){
+        courant = courant->suivant;
     }
-    else if(size(l) == 1){
-        printf("insertByX: Liste de taille 1\n");
-        if(p.x < l->premier->point.x){
-            ajouterPointDebut(l, p);
-        }
-        else{
-            ajouterPointFin(l, p);
-        }
-        return l;
+    if(courant == NULL){
+        ajouterPointFin(l, p);
     }
     else{
-        ElementListe courant = l->premier;
-        while(courant != NULL){
-            printf("insertByX: courant->point.x = %d\n", courant->point.x);
-            if(courant->point.x > p.x){
-                printf("insertByX: courant->point.x > p.x\n");
-                if(courant->precedent == NULL){
-                    printf("insertByX: courant->precedent == NULL\n");
-                    ajouterPointDebut(l, p);
-                    return l;
-                }
-                else{
-                    printf("insertByX: courant->precedent != NULL\n");
-                    ElementListe nouveau = malloc(sizeof(StructElementListe));
-                    if (l == NULL || nouveau == NULL){
-                        printf("insertByX: malloc failed\n");
-                        exit(EXIT_FAILURE);
-                    }
-                    nouveau->point = p;
-                    nouveau->suivant = courant;
-                    nouveau->precedent = courant->precedent;
-                    courant->precedent->suivant = nouveau;
-                    courant->precedent = nouveau;
-                    return l;
-                }
-            }
-            courant = courant->suivant;
+        ElementListe nouveau = malloc(sizeof(StructElementListe));
+        if (l == NULL || nouveau == NULL)
+            exit(EXIT_FAILURE);
+        nouveau->point = p;
+        nouveau->index = size(l);
+        nouveau->suivant = courant;
+        nouveau->precedent = courant->precedent;
+        if(courant->precedent == NULL){
+            l->premier = nouveau;
         }
-        ajouterPointFin(l, p);
+        else{
+            courant->precedent->suivant = nouveau;
+        }
+        courant->precedent = nouveau;
+        l->taille++;
+        l->selected = nouveau;
     }
-    return l;
 }
 
 Liste sortListeByX(Liste l){
     Liste l2 = new_Liste();
-    Liste l3 = l;
-    printf("okalkramlk\n");
-    printf("%d\n",size(l));
-    Point p;
+    ElementListe courant = l->premier;
     for(int i = 0; i < size(l); i++){
-        p = l3->premier->point;
-        l2 = insertByX(l2, p);
-        l3->premier = l3->premier->suivant;
+        insertByX(l2, courant->point);
+        courant = courant->suivant;
     }
-    printf("On va retourner L2\n");
     return l2;
 }
