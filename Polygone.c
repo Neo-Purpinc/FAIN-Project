@@ -1,5 +1,5 @@
 #include "Polygone.h"
-
+#include <float.h>
 Polygone createPolygone() {
     Polygone p = malloc(sizeof(PolygoneStruct));
     p->isClosed = false;
@@ -147,40 +147,82 @@ int getYmax(Polygone p){
     }
     return ymax;
 }
-int closestVertex(int x, int y, Polygone p){
-    ElementListe courant = p->points->premier;
+void closestVertex(int x, int y, Polygone p){
+    ElementListe courant = p->points->premier,index=courant;
     float min = distance(x,y,courant->point.x,courant->point.y);
-    int index = 0;
     while(courant->suivant != NULL){
         ElementListe follow = courant->suivant;
         float dist = distance(x,y,follow->point.x,follow->point.y);
         if(dist < min){
             min = dist;
-            index = follow->index;
+            index = follow;
         }
         courant = courant->suivant;
     }
-    return index;
+    p->points->selected = index;
 }
 
-int closestEdge(int x, int y, Polygone p){
+float shortestDistancePointSegment(int x, int y, Point a, Point b){
+    // a et b sont les extrémités du segment
+    // x et y sont le point à tester
+    // Déterminer l'équation y = ax + b
+    float a1 = (b.y-a.y)/(b.x-a.x);
+    float b1 = a.y - a1*a.x;
+    float dist = abs(-a1*x + y - b1)/sqrt(pow(a1,2)+1);
+    return dist;
+}
+void closestEdge(int x, int y, Polygone p){
     ElementListe courant = p->points->premier;
-    float min = distance(x,y,courant->point.x,courant->point.y);
-    ElementListe closest1=courant, closest2=courant;
+    float min = FLT_MAX;
+    ElementListe closest=courant;
+    printf("J'ai cliqué en (%d,%d)\n",x,y);
     while(courant->suivant != NULL){
         ElementListe follow = courant->suivant;
-        float dist = distance(x,y,courant->point.x,follow->point.y);
+        if(follow==NULL)
+            follow = p->points->premier;
+        float dist = shortestDistancePointSegment(x,y,courant->point,follow->point);
         if(dist < min){
-            closest2 = closest1;
+            printf("Le minimum devient %f et l'index est %d aux coordonnées (%d,%d)\n",dist,follow->index,follow->point.x,follow->point.y);
             min = dist;
-            closest1 = follow;
+            closest = follow;
         }
         courant = courant->suivant;
     }
-    if(closest1->suivant == closest2)
-        return closest1->index;
-    else
-        return closest2->index;
+    printf("%d\n",closest->index);
+    ElementListe avant = closest->precedent;
+    ElementListe apres = closest->suivant;
+    if(avant==NULL){
+        if(!p->isClosed){
+            p->points->selected = closest;
+            return;
+        }
+        avant = p->points->dernier;
+    }
+    if(apres==NULL){
+        if(!p->isClosed){
+            p->points->selected = closest->precedent;
+            return;
+        }
+        apres = p->points->premier;
+    }
+
+    // float penteApres = (float)(apres->point.y-closest->point.y)/(apres->point.x-closest->point.x);
+    // float penteAvant = (float)(avant->point.y-closest->point.y)/(avant->point.x-closest->point.x);
+    // float bAvant = closest->point.y - penteAvant*closest->point.x;
+    // float bApres = closest->point.y - penteApres*closest->point.x;
+    // float yAvant = penteAvant*x + bAvant;
+    // float yApres = penteApres*x + bApres;
+    // float zeroAvant = penteAvant*x - yAvant + bAvant;
+    // float zeroApres = penteApres*x - yApres + bApres;
+    float distanceAvant = shortestDistancePointSegment(x,y,avant->point,closest->point);
+    float distanceApres = shortestDistancePointSegment(x,y,closest->point,apres->point);
+    printf("La distance entre les points %d et %d est %f\n",avant->index,closest->index,distanceAvant);
+    printf("La distance entre les points %d et %d est %f\n",closest->index,apres->index,distanceApres);
+    if(distanceAvant < distanceApres){
+        // printf("On rentre dan le cas 1 avec distanceAvant = %f et distanceApres = %f\n",distanceAvant,distanceApres);
+        closest = avant;
+    }
+    p->points->selected = closest;
 }
 void drawSelectedPoint(Image *img, Polygone p){
     Color red = C_new(255,0,0);
@@ -305,7 +347,6 @@ void createPointBetweenTwoPoints(Polygone p){
     ElementListe follow = courant->suivant;
     if(follow == NULL){
         addPoint(p,getPointBetweenTwoPoints(courant->point,p->points->premier->point));
-        printf("Impossible de creer un point entre deux points\n");
     } else{
         ElementListe newPoint = (ElementListe)malloc(sizeof(StructElementListe));
         newPoint->point = getPointBetweenTwoPoints(courant->point,follow->point);

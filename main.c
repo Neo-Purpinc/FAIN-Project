@@ -52,10 +52,10 @@ void mouse_CB(int button, int state, int x, int y)
 				addPoint(polygone,new_Point(x,img->_height-y));
 			break;
 			case VERTEX:
-				selectPointByIndex(polygone,closestVertex(x,img->_height-y,polygone));
+				closestVertex(x,img->_height-y,polygone);
 			break;
 			case EDGE:
-				selectPointByIndex(polygone,closestEdge(x,img->_height-y,polygone));
+				closestEdge(x,img->_height-y,polygone);
 			break;
 		}
 		
@@ -89,7 +89,8 @@ void keyboard_CB(unsigned char key, int x, int y)
 		case 27 : exit(1); break;
 		case 'z' : I_zoom(img,2.0); break;
 		case 'Z' : I_zoom(img,0.5); break;
-		case 'i' : I_zoomInit(img); setMode(polygone,INSERT); break;
+		case 'I' : I_zoomInit(img); break;
+		case 'i' : setMode(polygone,INSERT); break;
 		case 'v' : 
 			setMode(polygone,VERTEX);
 		break;
@@ -106,7 +107,7 @@ void keyboard_CB(unsigned char key, int x, int y)
 			if(!isPolygoneEmpty(polygone))
 			{
 				toggleClosed(polygone);
-				if(!polygone->isClosed && polygone->points->selected == polygone->points->dernier)
+				if(!polygone->isClosed && polygone->points->selected == polygone->points->dernier && getMode(polygone) == EDGE)
 					selectNextPoint(polygone);
 			}
 		break;
@@ -202,7 +203,7 @@ int main(int argc, char **argv)
 			original = I_new(largeur,hauteur);
 			img = original;
 		}
-		int windowPosX = 2000, windowPosY = 700;
+		int windowPosX = 1050, windowPosY = 200;
 		polygone = createPolygone();
 		glutInitWindowSize(largeur,hauteur);
 		glutInitWindowPosition(windowPosX,windowPosY);
