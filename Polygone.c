@@ -166,18 +166,21 @@ int closestVertex(int x, int y, Polygone p){
 int closestEdge(int x, int y, Polygone p){
     ElementListe courant = p->points->premier;
     float min = distance(x,y,courant->point.x,courant->point.y);
-    int index = 0,index2 = 0;
+    ElementListe closest1=courant, closest2=courant;
     while(courant->suivant != NULL){
         ElementListe follow = courant->suivant;
-        float dist = distance(x,y,follow->point.x,follow->point.y);
+        float dist = distance(x,y,courant->point.x,follow->point.y);
         if(dist < min){
-            index2 = index;
+            closest2 = closest1;
             min = dist;
-            index = follow->index;
+            closest1 = follow;
         }
         courant = courant->suivant;
     }
-    return (minimum(index,index2));
+    if(closest1->suivant == closest2)
+        return closest1->index;
+    else
+        return closest2->index;
 }
 void drawSelectedPoint(Image *img, Polygone p){
     Color red = C_new(255,0,0);
@@ -315,7 +318,21 @@ void createPointBetweenTwoPoints(Polygone p){
         p->points->selected = newPoint;
     }
 }
-
+void selectPointByIndex(Polygone p, int index){
+    ElementListe courant = p->points->premier;
+    while(courant->suivant != NULL){
+        if(courant->index == index){
+            p->points->selected = courant;
+            return;
+        }
+        courant = courant->suivant;
+    }
+    if(courant->index == index){
+        p->points->selected = courant;
+        return;
+    }
+    printf("Point non trouve\n");
+}
 void selectLastPoint(Polygone p){
     p->points->selected = p->points->dernier;
 }

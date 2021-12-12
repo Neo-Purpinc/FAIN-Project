@@ -30,4 +30,6 @@ void deplacerSelectedPoint(Polygone p, int dx, int dy);
 void selectNextEdge(Polygone p);
 void selectPreviousEdge(Polygone p);
 void createPointBetweenTwoPoints(Polygone p);
+
+void selectPointByIndex(Polygone p, int index);
 #endif

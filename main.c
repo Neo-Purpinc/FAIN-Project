@@ -50,12 +50,12 @@ void mouse_CB(int button, int state, int x, int y)
 		switch(getMode(polygone)){
 			case INSERT:
 				addPoint(polygone,new_Point(x,img->_height-y));
-				if(polygone->isFilled)
-					toggleFilled(polygone);
 			break;
 			case VERTEX:
+				selectPointByIndex(polygone,closestVertex(x,img->_height-y,polygone));
 			break;
 			case EDGE:
+				selectPointByIndex(polygone,closestEdge(x,img->_height-y,polygone));
 			break;
 		}
 		
@@ -95,14 +95,14 @@ void keyboard_CB(unsigned char key, int x, int y)
 		break;
 		case 'e' :
 			setMode(polygone,EDGE);
-			if(polygone->points->selected == polygone->points->dernier)
+			if(polygone->points->selected == polygone->points->dernier && !polygone->isClosed)
 				selectPreviousPoint(polygone);
 		break;
 		case 'f' : 
 			if(!isPolygoneEmpty(polygone)){
 				toggleFilled(polygone);
 			}
-		case 'c' : 
+		case 'c' :
 			if(!isPolygoneEmpty(polygone))
 			{
 				toggleClosed(polygone);
