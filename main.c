@@ -95,7 +95,8 @@ void keyboard_CB(unsigned char key, int x, int y)
 		break;
 		case 'e' :
 			setMode(polygone,EDGE);
-			selectPreviousPoint(polygone);
+			if(polygone->points->selected == polygone->points->dernier)
+				selectPreviousPoint(polygone);
 		break;
 		case 'f' : 
 			if(!isPolygoneEmpty(polygone)){

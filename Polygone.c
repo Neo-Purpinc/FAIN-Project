@@ -300,14 +300,20 @@ Point getPointBetweenTwoPoints(Point a, Point b){
 void createPointBetweenTwoPoints(Polygone p){
     ElementListe courant = p->points->selected;
     ElementListe follow = courant->suivant;
-    ElementListe newPoint = malloc(sizeof(ElementListe));
-    newPoint->point = getPointBetweenTwoPoints(courant->point,follow->point);
-    newPoint->suivant = follow;
-    newPoint->precedent = courant;
-    newPoint->index = p->points->taille;
-    courant->suivant = newPoint;
-    follow->precedent = newPoint;
-    p->points->taille++;
+    if(follow == NULL){
+        addPoint(p,getPointBetweenTwoPoints(courant->point,p->points->premier->point));
+        printf("Impossible de creer un point entre deux points\n");
+    } else{
+        ElementListe newPoint = (ElementListe)malloc(sizeof(StructElementListe));
+        newPoint->point = getPointBetweenTwoPoints(courant->point,follow->point);
+        newPoint->suivant = follow;
+        newPoint->precedent = courant;
+        p->points->taille++;
+        newPoint->index = p->points->taille;
+        courant->suivant = newPoint;
+        follow->precedent = newPoint;
+        p->points->selected = newPoint;
+    }
 }
 
 void selectLastPoint(Polygone p){
