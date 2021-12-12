@@ -15,6 +15,31 @@ Color C_new(float red, float green, float blue)
 	c._blue = blue;
 	return c;
 }
+bool isInImage(Image *img, int x, int y){
+	bool rep = false;
+	if((x>=0)&&(x<img->_width)&&
+	   (y>=0)&&(y<img->_height))
+		rep = true;
+	return rep;
+}
+Color getColor(Image *img, int x, int y){
+	Color c;
+	if(isInImage(img,x,y))
+		c = img->_buffer[x][y];
+	else
+		c = C_new(0,0,0);
+	return c;
+}
+bool equalColors(Color a, Color b){
+	bool rep = false;
+	if((a._red==b._red)&&
+	   (a._green==b._green)&&
+	   (a._blue==b._blue))
+		rep = true;
+	return rep;
+}
+
+
 
 //------------------------------------------------------------------------
 
@@ -296,26 +321,6 @@ void I_copy(Image *image,Image *sortie){
 			sortie->_buffer[i][j] = image->_buffer[i][j];
 }
 
-void I_bresenhamOrigin(Image *img, int x, int y){
-	I_changeColor(img,C_new(0,0,0));
-	Color white = C_new(255,255,255);
-	int dx = x, dy= y;
-	int incrd1 = 2*dy, incrd2 = 2*(dy-dx);
-	int xPrint = 0, yPrint = 0;
-	int d = 2*dy-dx;
-	while(xPrint<x){
-		I_plotColor(img,xPrint,yPrint,white);
-		xPrint++;
-		if(d<0)
-			d += incrd1;
-		else{
-			yPrint++;
-			d += incrd2;
-		}
-	}
-	I_plotColor(img,xPrint,yPrint,white);
-}
-
 void z2ToPremierOctant(int xA, int yA, int xB, int yB, int *xA_1O, int *yA_1O, int *xB_1O, int *yB_1O){
 	int xA_1q, yA_1q, xB_1q, yB_1q;
 	if(xB>xA){
@@ -363,31 +368,7 @@ void premierOctantToZ2(int xA, int yA, int xB, int yB, int x_1O, int y_1O, int *
 	*y = y_1q;
 }
 
-void I_bresenham(Image *img, int xA, int yA, int xB, int yB){
-	int xA_1O, yA_1O, xB_1O, yB_1O;
-	z2ToPremierOctant(xA,yA,xB,yB, &xA_1O, &yA_1O, &xB_1O, &yB_1O);
-	I_changeColor(img, C_new(255,255,255));
-	int dx = xB_1O - xA_1O, dy = yB_1O - yA_1O;
-	int incrd1 = 2*dy, incrd2 = 2*(dy-dx);
-	int d = 2*dy-dx;
-	int x = xA_1O, y = yA_1O;
-	int x_tmp, y_tmp;
-	while(x < xB_1O){
-		premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
-		I_plot(img, abs(x_tmp), abs(y_tmp));
-		x++;
-		if(d<0)
-			d += incrd1;
-		else{
-			y++;
-			d += incrd2;
-		}
-	}
-	premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
-	I_plot(img, abs(x_tmp), abs(y_tmp));
-}
-
-void I_bresenhamColor(Image *img, int xA, int yA, int xB, int yB, Color c){
+void I_bresenham(Image *img, int xA, int yA, int xB, int yB, Color c){
 	int xA_1O, yA_1O, xB_1O, yB_1O;
 	z2ToPremierOctant(xA,yA,xB,yB, &xA_1O, &yA_1O, &xB_1O, &yB_1O);
 	I_changeColor(img, c);
@@ -409,87 +390,4 @@ void I_bresenhamColor(Image *img, int xA, int yA, int xB, int yB, Color c){
 	}
 	premierOctantToZ2(xA,yA,xB,yB,x,y,&x_tmp,&y_tmp);
 	I_plot(img, abs(x_tmp), abs(y_tmp));
-}
-void I_remplissage4(Image *img_in, Image *img_out, int x_germe, int y_germe){
-	I_copy(img_in, img_out);
-	Color couleur_germe = getColor(img_in,x_germe,y_germe);
-	Color rouge = C_new(255,0,0);
-	Pile pile = new_Pile();
-	empiler(pile,new_Point(x_germe,y_germe));
-	while(!is_empty(pile)){
-		Point p = depiler(pile);
-		I_plotColor(img_out, p.x, p.y, rouge);
-		// Nord
-		if(isInImage(img_in,p.x,p.y+1) && equalColors(getColor(img_in,p.x,p.y+1),couleur_germe) && !equalColors(getColor(img_out,p.x,p.y+1),rouge))
-			empiler(pile,new_Point(p.x,p.y+1));
-		// Sud
-		if(isInImage(img_in,p.x,p.y-1) && equalColors(getColor(img_in,p.x,p.y-1),couleur_germe) && !equalColors(getColor(img_out,p.x,p.y-1),rouge))
-			empiler(pile,new_Point(p.x,p.y-1));
-		// Est
-		if(isInImage(img_in,p.x+1,p.y) && equalColors(getColor(img_in,p.x+1,p.y),couleur_germe) && !equalColors(getColor(img_out,p.x+1,p.y),rouge))
-			empiler(pile,new_Point(p.x+1,p.y));
-		// Ouest
-		if(isInImage(img_in,p.x-1,p.y) && equalColors(getColor(img_in,p.x-1,p.y),couleur_germe) && !equalColors(getColor(img_out,p.x-1,p.y),rouge))
-			empiler(pile,new_Point(p.x-1,p.y));
-	}
-}
-void I_remplissage8(Image *img_in, Image *img_out, int x_germe, int y_germe){
-	I_copy(img_in, img_out);
-	Color couleur_germe = getColor(img_in,x_germe,y_germe);
-	Color rouge = C_new(255,0,0);
-	Pile pile = new_Pile();
-	empiler(pile,new_Point(x_germe,y_germe));
-	while(!is_empty(pile)){
-		Point p = depiler(pile);
-		I_plotColor(img_out, p.x, p.y, rouge);
-		// Nord
-		if(isInImage(img_in,p.x,p.y+1) && equalColors(getColor(img_in,p.x,p.y+1),couleur_germe) && !equalColors(getColor(img_out,p.x,p.y+1),rouge))
-			empiler(pile,new_Point(p.x,p.y+1));
-		// Sud
-		if(isInImage(img_in,p.x,p.y-1) && equalColors(getColor(img_in,p.x,p.y-1),couleur_germe) && !equalColors(getColor(img_out,p.x,p.y-1),rouge))
-			empiler(pile,new_Point(p.x,p.y-1));
-		// Est
-		if(isInImage(img_in,p.x+1,p.y) && equalColors(getColor(img_in,p.x+1,p.y),couleur_germe) && !equalColors(getColor(img_out,p.x+1,p.y),rouge))
-			empiler(pile,new_Point(p.x+1,p.y));
-		// Ouest
-		if(isInImage(img_in,p.x-1,p.y) && equalColors(getColor(img_in,p.x-1,p.y),couleur_germe) && !equalColors(getColor(img_out,p.x-1,p.y),rouge))
-			empiler(pile,new_Point(p.x-1,p.y));
-		// Nord-Est
-		if(isInImage(img_in,p.x+1,p.y+1) && equalColors(getColor(img_in,p.x+1,p.y+1),couleur_germe) && !equalColors(getColor(img_out,p.x+1,p.y+1),rouge))
-			empiler(pile,new_Point(p.x+1,p.y+1));
-		// Nord-Ouest
-		if(isInImage(img_in,p.x-1,p.y+1) && equalColors(getColor(img_in,p.x-1,p.y+1),couleur_germe) && !equalColors(getColor(img_out,p.x-1,p.y+1),rouge))
-			empiler(pile,new_Point(p.x-1,p.y+1));
-		// Sud-Est
-		if(isInImage(img_in,p.x+1,p.y-1) && equalColors(getColor(img_in,p.x+1,p.y-1),couleur_germe) && !equalColors(getColor(img_out,p.x+1,p.y-1),rouge))
-			empiler(pile,new_Point(p.x+1,p.y-1));
-		// Sud-Ouest
-		if(isInImage(img_in,p.x-1,p.y-1) && equalColors(getColor(img_in,p.x-1,p.y-1),couleur_germe) && !equalColors(getColor(img_out,p.x-1,p.y-1),rouge))
-			empiler(pile,new_Point(p.x-1,p.y-1));
-	}
-}
-
-Color getColor(Image *img, int x, int y){
-	Color c;
-	if(isInImage(img,x,y))
-		c = img->_buffer[x][y];
-	else
-		c = C_new(0,0,0);
-	return c;
-}
-bool equalColors(Color a, Color b){
-	bool rep = false;
-	if((a._red==b._red)&&
-	   (a._green==b._green)&&
-	   (a._blue==b._blue))
-		rep = true;
-	return rep;
-}
-
-bool isInImage(Image *img, int x, int y){
-	bool rep = false;
-	if((x>=0)&&(x<img->_width)&&
-	   (y>=0)&&(y<img->_height))
-		rep = true;
-	return rep;
 }

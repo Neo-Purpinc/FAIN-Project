@@ -10,14 +10,8 @@
 
 \*===============================================================*/
 
-#include <stdio.h>
-#include <GL/glut.h>
-#include <GL/gl.h>
-
-#include "Polygone.h"
 #include "Image.h"
-#include "utils.h"
-
+#include "Polygone.h"
 Image *img, *original;
 Polygone polygone;
 
@@ -47,9 +41,9 @@ void mouse_CB(int button, int state, int x, int y)
 	if((button==GLUT_LEFT_BUTTON)&&(state==GLUT_DOWN))
 	{
 		I_focusPoint(img,x,img->_height-y);
-		switch(getMode(polygone)){
+		switch(polygone->mode){
 			case INSERT:
-				addPoint(polygone,new_Point(x,img->_height-y));
+				addVertex(polygone,createPoint(x,img->_height-y));
 			break;
 			case VERTEX:
 				closestVertex(x,img->_height-y,polygone);
@@ -63,7 +57,7 @@ void mouse_CB(int button, int state, int x, int y)
 	else if(button==GLUT_MIDDLE_BUTTON && state==GLUT_DOWN)
 	{
 		I_focusPoint(img,x,img->_height-y);
-		switch(getMode(polygone)){
+		switch(polygone->mode){
 			case EDGE:
 			createPointBetweenTwoPoints(polygone);
 			break;
@@ -90,12 +84,12 @@ void keyboard_CB(unsigned char key, int x, int y)
 		case 'z' : I_zoom(img,2.0); break;
 		case 'Z' : I_zoom(img,0.5); break;
 		case 'I' : I_zoomInit(img); break;
-		case 'i' : setMode(polygone,INSERT); break;
+		case 'i' : polygone->mode = INSERT; break;
 		case 'v' : 
-			setMode(polygone,VERTEX);
+			polygone->mode = VERTEX;
 		break;
 		case 'e' :
-			setMode(polygone,EDGE);
+			polygone->mode = EDGE;
 			if(polygone->points->selected == polygone->points->dernier && !polygone->isClosed)
 				selectPreviousPoint(polygone);
 		break;
@@ -110,7 +104,7 @@ void keyboard_CB(unsigned char key, int x, int y)
 			if(!isPolygoneEmpty(polygone))
 			{
 				toggleClosed(polygone);
-				if(!polygone->isClosed && polygone->points->selected == polygone->points->dernier && getMode(polygone) == EDGE)
+				if(!polygone->isClosed && polygone->points->selected == polygone->points->dernier && polygone->mode == EDGE)
 					selectPreviousPoint(polygone);
 			}
 		break;
@@ -139,37 +133,37 @@ void special_CB(int key, int x, int y)
 	{
 	case GLUT_KEY_UP    : 
 		// I_move(img,0,d);
-		if(getMode(polygone)==VERTEX)
-			deplacerSelectedPoint(polygone,0,d);
+		if(polygone->mode==VERTEX)
+			moveSelectedPoint(polygone,0,d);
 		break;
 	case GLUT_KEY_DOWN  :
 		// I_move(img,0,-d);
-		if(getMode(polygone)==VERTEX)
-			deplacerSelectedPoint(polygone,0,-d);
+		if(polygone->mode==VERTEX)
+			moveSelectedPoint(polygone,0,-d);
 		break;
 	case GLUT_KEY_LEFT  : 
 		// I_move(img,d,0);
-		if(getMode(polygone)==VERTEX)
-			deplacerSelectedPoint(polygone,-d,0);
+		if(polygone->mode==VERTEX)
+			moveSelectedPoint(polygone,-d,0);
 		break;
 	case GLUT_KEY_RIGHT :
 		// I_move(img,-d,0);
-		if(getMode(polygone)==VERTEX)
-			deplacerSelectedPoint(polygone,d,0);
+		if(polygone->mode==VERTEX)
+			moveSelectedPoint(polygone,d,0);
 		break;
 	case 104:
-		if(getMode(polygone)==VERTEX || getMode(polygone)==EDGE){
+		if(polygone->mode==VERTEX || polygone->mode==EDGE){
 			Point p = polygone->points->selected->point;
 			selectNextPoint(polygone);
-			if(getMode(polygone)==VERTEX && polygone->points->selected == polygone->points->dernier->precedent && equalPoints(p,polygone->points->selected->point))
+			if(polygone->mode==VERTEX && polygone->points->selected == polygone->points->dernier->precedent && equalPoints(p,polygone->points->selected->point))
 				selectLastPoint(polygone);
 		}
 	break;
 	case 105:
-		if(getMode(polygone)==VERTEX || getMode(polygone)==EDGE){
+		if(polygone->mode==VERTEX || polygone->mode==EDGE){
 			Point p = polygone->points->selected->point;
 			selectPreviousPoint(polygone);
-			if(getMode(polygone)==VERTEX && polygone->points->selected == polygone->points->dernier->precedent && equalPoints(p,polygone->points->selected->point))
+			if(polygone->mode==VERTEX && polygone->points->selected == polygone->points->dernier->precedent && equalPoints(p,polygone->points->selected->point))
 				selectLastPoint(polygone);
 		}
 	break;
@@ -231,7 +225,7 @@ int main(int argc, char **argv)
 		// glutPassiveMotionFunc(passive_mouse_move_CB);
 
 		glutMainLoop();
-
+		freePolygone(polygone);
 		return 0;
 	}
 }
