@@ -32,4 +32,5 @@ void selectPreviousEdge(Polygone p);
 void createPointBetweenTwoPoints(Polygone p);
 void selectPointByIndex(Polygone p, int index);
 void freePolygone(Polygone p);
+void dragAndDrop(Polygone p, int x, int y);
 #endif

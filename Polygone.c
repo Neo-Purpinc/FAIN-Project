@@ -30,13 +30,14 @@ bool intersectionsAux(int y, Point a, Point b, Point *res)
     {
         return false;
     }
-    Point c, d;
-    c.x = 0;
-    c.y = y;
-    d.x = 1;
-    d.y = y;
-    res->x = ((a.x * b.y - a.y * b.x) * (c.x - d.x) - (a.x - b.x) * (c.x * d.y - c.y * d.x)) / ((a.x - b.x) * (c.y - d.y) - (a.y - b.y) * (c.x - d.x)) + 1;
-    res->y = y;
+    if(((a.y - b.y)) == 0){
+        printf("ICI \n");
+        return false;
+    }
+    res->x=((a*d - c*b)*(0-1) - (a-b)*(0*y - y*1))/((a-b)*(0) - (c-d)*(-1))+1;
+
+    res->x=((a.x*b.y + a.y*b.x) + (a.x-b.x)*y) / (a.y-b.y) +1;
+    res->y=y;
     return true;
 }
 Liste getIntersections(Polygone p, int y)
@@ -96,7 +97,7 @@ int getYmin(Polygone p)
 {
     ElementListe courant = p->points->premier;
     int ymin = courant->point.y;
-    while (courant->suivant != NULL)
+    while (courant != NULL)
     {
         if (courant->point.y < ymin)
             ymin = courant->point.y;
@@ -108,7 +109,7 @@ int getYmax(Polygone p)
 {
     ElementListe courant = p->points->premier;
     int ymax = courant->point.y;
-    while (courant->suivant != NULL)
+    while (courant != NULL)
     {
         if (courant->point.y > ymax)
             ymax = courant->point.y;
@@ -204,10 +205,7 @@ void drawPolygoneFilled(Image *img, Polygone p)
         {
             Point a = listeIntersections->premier->point;
             Point b = listeIntersections->premier->suivant->point;
-            for (int x = a.x; x < b.x; x++)
-            {
-                I_plotColor(img, x, y, C_new(255, 255, 255));
-            }
+            I_bresenham(img, a.x, a.y, b.x, b.y, C_new(255, 255, 255));
             listeIntersections->premier = listeIntersections->premier->suivant->suivant;
         }
     }
@@ -298,6 +296,7 @@ void removeSelectedPoint(Polygone p)
 }
 void moveSelectedPoint(Polygone p, int dx, int dy)
 {
+    
     p->points->selected->point.x += dx;
     p->points->selected->point.y += dy;
 }
@@ -357,4 +356,9 @@ void freePolygone(Polygone p)
 { 
     freeListe(p->points);
     free(p);
+}
+
+void dragAndDrop(Polygone p, int x, int y){
+    p->points->selected->point.x = x;
+    p->points->selected->point.y = y;
 }
