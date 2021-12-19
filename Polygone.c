@@ -1,6 +1,6 @@
 #include "Polygone.h"
 
-
+// POLYGONE
 Polygone createPolygone()
 {
     Polygone p = malloc(sizeof(PolygoneStruct));
@@ -10,7 +10,6 @@ Polygone createPolygone()
     p->mode = INSERT;
     return p;
 }
-
 bool isPolygoneEmpty(Polygone p)
 {
     return p->points->taille == 0;
@@ -27,6 +26,13 @@ void addVertex(Polygone p, Point point)
 { 
     addPoint(p->points, point);
 }
+void freePolygone(Polygone p)
+{ 
+    freeListe(p->points);
+    free(p);
+}
+
+// AUXILIAIRES
 bool isBetween(int y1, int y, int y2){
     return (y1 < y && y <= y2) || (y1 >= y && y > y2);
 }
@@ -56,17 +62,6 @@ Liste getIntersections(Polygone p, int y)
     tmp.x = intersectionsAux(y, courant->point, p->points->premier->point);
     if(tmp.x != -1) insertByX(listeIntersections, tmp);
     return listeIntersections;
-}
-void drawBrokenLine(Image *img, Polygone p)
-{
-    Color c = C_new(0, 0, 255);
-    ElementListe courant = p->points->premier;
-    while (courant->suivant != NULL)
-    {
-        ElementListe follow = courant->suivant;
-        I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y,c);
-        courant = courant->suivant;
-    }
 }
 float distance(int x1, int y1, int x2, int y2) { return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)); }
 int minimum(int a, int b) { return a < b ? a : b; }
@@ -111,13 +106,25 @@ void closestVertex(int x, int y, Polygone p)
     }
     p->points->selected = index;
 }
-
 void closestEdge(int x, int y, Polygone p)
 {
     closestVertex(x, y, p);
     if (p->points->selected == p->points->dernier && p->mode == EDGE && !p->isClosed)
     {
         p->points->selected = p->points->selected->precedent;
+    }
+}
+
+// DESSIN
+void drawBrokenLine(Image *img, Polygone p)
+{
+    Color c = C_new(0, 0, 255);
+    ElementListe courant = p->points->premier;
+    while (courant->suivant != NULL)
+    {
+        ElementListe follow = courant->suivant;
+        I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y,c);
+        courant = courant->suivant;
     }
 }
 void drawSelectedPoint(Image *img, Polygone p)
@@ -206,6 +213,8 @@ void drawPolygone(Image *img, Polygone p)
             drawSelectedEdge(img, p);
     }
 }
+
+// SELECTIONS
 void selectNextPoint(Polygone p)
 {
     if (p->points->selected->suivant != NULL)
@@ -231,6 +240,12 @@ void selectPreviousPoint(Polygone p)
             p->points->selected = p->points->dernier;
     }
 }
+void selectLastPoint(Polygone p)
+{
+    p->points->selected = p->points->dernier;
+}
+
+// ACTIONS SUR LES POINTS
 void removeSelectedPoint(Polygone p)
 {
     ElementListe courant = p->points->selected;
@@ -260,13 +275,6 @@ void moveSelectedPoint(Polygone p, int dx, int dy)
     p->points->selected->point.x += dx;
     p->points->selected->point.y += dy;
 }
-Point getPointBetweenTwoPoints(Point a, Point b)
-{
-    Point p;
-    p.x = (a.x + b.x) / 2;
-    p.y = (a.y + b.y) / 2;
-    return p;
-}
 void createPointBetweenTwoPoints(Polygone p)
 {
     ElementListe courant = p->points->selected;
@@ -288,35 +296,6 @@ void createPointBetweenTwoPoints(Polygone p)
         p->points->selected = newPoint;
     }
 }
-void selectPointByIndex(Polygone p, int index)
-{
-    ElementListe courant = p->points->premier;
-    while (courant->suivant != NULL)
-    {
-        if (courant->index == index)
-        {
-            p->points->selected = courant;
-            return;
-        }
-        courant = courant->suivant;
-    }
-    if (courant->index == index)
-    {
-        p->points->selected = courant;
-        return;
-    }
-}
-void selectLastPoint(Polygone p)
-{
-    p->points->selected = p->points->dernier;
-}
-
-void freePolygone(Polygone p)
-{ 
-    freeListe(p->points);
-    free(p);
-}
-
 void dragAndDrop(Polygone p, int x, int y){
     p->points->selected->point.x = x;
     p->points->selected->point.y = y;

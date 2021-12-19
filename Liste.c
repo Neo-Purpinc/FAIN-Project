@@ -81,3 +81,11 @@ void printListe(Liste l){
     }
     printf("\n");
 }
+
+Point getPointBetweenTwoPoints(Point a, Point b)
+{
+    Point p;
+    p.x = (a.x + b.x) / 2;
+    p.y = (a.y + b.y) / 2;
+    return p;
+}

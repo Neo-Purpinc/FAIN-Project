@@ -32,14 +32,15 @@ typedef struct
 
 // FONCTIONS
 // - Point
-Point createPoint(int x,int y);
-bool equalPoints(Point p1, Point p2);
+Point createPoint(int,int);
+bool equalPoints(Point, Point);
 
 // - Liste
 Liste createListe();
-void freeListe(Liste liste);
-void addPoint(Liste liste,Point p);
-void insertByX(Liste liste,Point p);
-void printListe(Liste liste);
-Point removeFirst(Liste liste);
+void freeListe(Liste);
+void addPoint(Liste,Point);
+void insertByX(Liste,Point);
+void printListe(Liste);
+Point removeFirst(Liste);
+Point getPointBetweenTwoPoints(Point, Point);
 #endif

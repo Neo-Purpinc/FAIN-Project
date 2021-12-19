@@ -15,22 +15,19 @@ typedef struct {
 } PolygoneStruct, *Polygone;
 
 Polygone createPolygone();
-void addVertex(Polygone p, Point point);
-bool isPolygoneEmpty(Polygone p);
-void toggleClosed(Polygone p);
-void toggleFilled(Polygone p);
-void drawPolygone(Image *img, Polygone p);
-void closestVertex(int x, int y, Polygone p);
-void closestEdge(int x, int y, Polygone p);
-void selectNextPoint(Polygone p);
-void selectPreviousPoint(Polygone p);
-void selectLastPoint(Polygone p);
-void removeSelectedPoint(Polygone p);
-void moveSelectedPoint(Polygone p, int dx, int dy);
-void selectNextEdge(Polygone p);
-void selectPreviousEdge(Polygone p);
-void createPointBetweenTwoPoints(Polygone p);
-void selectPointByIndex(Polygone p, int index);
-void freePolygone(Polygone p);
-void dragAndDrop(Polygone p, int x, int y);
+void addVertex(Polygone, Point);
+bool isPolygoneEmpty(Polygone);
+void toggleClosed(Polygone);
+void toggleFilled(Polygone);
+void drawPolygone(Image*, Polygone);
+void closestVertex(int, int, Polygone);
+void closestEdge(int, int, Polygone);
+void selectNextPoint(Polygone);
+void selectPreviousPoint(Polygone);
+void selectLastPoint(Polygone);
+void removeSelectedPoint(Polygone);
+void moveSelectedPoint(Polygone, int, int);
+void createPointBetweenTwoPoints(Polygone);
+void freePolygone(Polygone);
+void dragAndDrop(Polygone, int, int);
 #endif
