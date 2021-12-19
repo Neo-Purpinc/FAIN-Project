@@ -56,7 +56,7 @@ void insertByX(Liste l, Point p){
     }
     else{
         ElementListe nouveau = malloc(sizeof(StructElementListe));
-        if (l == NULL || nouveau == NULL)
+        if (nouveau == NULL)
             exit(EXIT_FAILURE);
         nouveau->point = p;
         nouveau->index = l->taille;
@@ -72,15 +72,6 @@ void insertByX(Liste l, Point p){
         l->taille++;
         l->selected = nouveau;
     }
-}
-void sortListe(Liste l){
-    Liste l2 = createListe();
-    ElementListe courant = l->premier;
-    for(int i = 0; i < l->taille; i++){
-        insertByX(l2, courant->point);
-        courant = courant->suivant;
-    }
-    l = l2;
 }
 void printListe(Liste l){
     ElementListe courant = l->premier;

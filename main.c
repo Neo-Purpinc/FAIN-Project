@@ -72,16 +72,9 @@ void mouse_CB(int button, int state, int x, int y)
 }
 
 void mouse_move_CB(int x,int y){
-	switch (polygone->mode)
-	{
-	case VERTEX: dragAndDrop(polygone,x,img->_height-y); break;
-	case EDGE: 
-		selectNextPoint(polygone);
-		dragAndDrop(polygone,x,img->_height-y);
-		selectPreviousPoint(polygone);
-	break;
-	case INSERT:
-	break;
+	if(polygone->mode==VERTEX){
+		if(x>=0 && x<img->_width && y>=0 && y<img->_height)
+		 	dragAndDrop(polygone,x,img->_height-y);
 	}
 	drawPolygone(img,polygone);
 }
@@ -123,8 +116,11 @@ void keyboard_CB(unsigned char key, int x, int y)
 			}
 		break;
 		case 127:
-			if(polygone->mode == VERTEX)
+			if(polygone->mode == VERTEX && polygone->points->taille > 0){
 				removeSelectedPoint(polygone);
+				if(polygone->points->taille == 0)
+					polygone->mode = INSERT;
+			}
 		break;
 		default : fprintf(stderr,"keyboard_CB : %d : unknown key.\n",key);
 	}
@@ -148,22 +144,22 @@ void special_CB(int key, int x, int y)
 	{
 	case GLUT_KEY_UP    : 
 		// I_move(img,0,d);
-		if(polygone->mode==VERTEX && polygone->points->selected->point.y+d<img->_height-1)
+		if(polygone->mode==VERTEX && polygone->points->selected->point.y+d<img->_height)
 			moveSelectedPoint(polygone,0,d);
 		break;
 	case GLUT_KEY_DOWN  :
 		// I_move(img,0,-d);
-		if(polygone->mode==VERTEX && polygone->points->selected->point.y-d>1)
+		if(polygone->mode==VERTEX && polygone->points->selected->point.y-d>=0)
 			moveSelectedPoint(polygone,0,-d);
 		break;
 	case GLUT_KEY_LEFT  : 
 		// I_move(img,d,0);
-		if(polygone->mode==VERTEX && polygone->points->selected->point.x-d>1)
+		if(polygone->mode==VERTEX && polygone->points->selected->point.x-d>=0)
 			moveSelectedPoint(polygone,-d,0);
 		break;
 	case GLUT_KEY_RIGHT :
 		// I_move(img,-d,0);
-		if(polygone->mode==VERTEX && polygone->points->selected->point.x+d<img->_width-1)
+		if(polygone->mode==VERTEX && polygone->points->selected->point.x+d<img->_width)
 			moveSelectedPoint(polygone,d,0);
 		break;
 	case 104:

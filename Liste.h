@@ -39,7 +39,7 @@ bool equalPoints(Point p1, Point p2);
 Liste createListe();
 void freeListe(Liste liste);
 void addPoint(Liste liste,Point p);
-void sortListe(Liste l);
+void insertByX(Liste liste,Point p);
 void printListe(Liste liste);
-
+Point removeFirst(Liste liste);
 #endif

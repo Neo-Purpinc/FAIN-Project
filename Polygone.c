@@ -23,71 +23,48 @@ void toggleFilled(Polygone p)
 {
     p->isFilled = !p->isFilled;
 }
-void addVertex(Polygone p, Point point) { addPoint(p->points, point); }
-bool intersectionsAux(int y, Point a, Point b, Point *res)
+void addVertex(Polygone p, Point point)
+{ 
+    addPoint(p->points, point);
+}
+bool isBetween(int y1, int y, int y2){
+    return (y1 < y && y <= y2) || (y1 >= y && y > y2);
+}
+int intersectionsAux(int y, Point a, Point b)
 {
-    if ((a.y > y && b.y > y) || (a.y < y && b.y < y))
-    {
-        return false;
-    }
-    if(((a.y - b.y)) == 0){
-        printf("ICI \n");
-        return false;
-    }
-    res->x=((a*d - c*b)*(0-1) - (a-b)*(0*y - y*1))/((a-b)*(0) - (c-d)*(-1))+1;
-
-    res->x=((a.x*b.y + a.y*b.x) + (a.x-b.x)*y) / (a.y-b.y) +1;
-    res->y=y;
-    return true;
+    int res;
+    if (!isBetween(a.y,y,b.y) || (a.y == b.y))
+        res = -1;
+    else if (a.x == b.x)
+        res = a.x;
+    else
+        res=((a.x*b.y - a.y*b.x)*(-1) - (a.x-b.x)*(-y))/(-(a.y-b.y)*(-1));
+    return res;
 }
 Liste getIntersections(Polygone p, int y)
 {
     Liste listeIntersections = createListe();
-    ElementListe courant = p->points->premier, follow = courant->suivant;
-    Point pointCourant, pointFollow, tmp;
-    int yPrevious, yNext;
-    bool isEqual;
-    while (courant != NULL)
+    ElementListe courant = p->points->premier;
+    Point tmp;
+    tmp.y = y;
+    while (courant->suivant != NULL)
     {
-        isEqual = false;
-        follow = courant->suivant;
-        if(follow == NULL)
-        {
-            follow = p->points->premier;
-        }
-        pointCourant = courant->point;
-        pointFollow = follow->point;
-        if(intersectionsAux(y, pointCourant, pointFollow, &tmp))
-        {
-            addPoint(listeIntersections, tmp);
-            if (equalPoints(pointCourant, tmp))
-            {
-                isEqual = true;
-                yPrevious = courant->precedent->point.y;
-                yNext = pointCourant.y;
-            }
-            else if (equalPoints(pointFollow, tmp))
-            {
-                isEqual = true;
-                yPrevious = pointCourant.y;
-                yNext = pointFollow.y;
-            }
-            if (isEqual && ((yPrevious > y && yNext > y) || (yPrevious < y && yNext < y)))
-            {
-                addPoint(listeIntersections, tmp);
-            }
-        }
+        tmp.x = intersectionsAux(y, courant->point, courant->suivant->point);
+        if(tmp.x != -1) insertByX(listeIntersections, tmp);
         courant = courant->suivant;
     }
+    tmp.x = intersectionsAux(y, courant->point, p->points->premier->point);
+    if(tmp.x != -1) insertByX(listeIntersections, tmp);
     return listeIntersections;
 }
 void drawBrokenLine(Image *img, Polygone p)
 {
+    Color c = C_new(0, 0, 255);
     ElementListe courant = p->points->premier;
     while (courant->suivant != NULL)
     {
         ElementListe follow = courant->suivant;
-        I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y,C_new(255,255,255));
+        I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y,c);
         courant = courant->suivant;
     }
 }
@@ -134,16 +111,7 @@ void closestVertex(int x, int y, Polygone p)
     }
     p->points->selected = index;
 }
-float shortestDistancePointSegment(int x, int y, Point a, Point b)
-{
-    // a et b sont les extrémités du segment
-    // x et y sont le point à tester
-    // Déterminer l'équation y = ax + b
-    float a1 = (b.y - a.y) / (b.x - a.x);
-    float b1 = a.y - a1 * a.x;
-    float dist = abs(-a1 * x + y - b1) / sqrt(pow(a1, 2) + 1);
-    return dist;
-}
+
 void closestEdge(int x, int y, Polygone p)
 {
     closestVertex(x, y, p);
@@ -155,96 +123,88 @@ void closestEdge(int x, int y, Polygone p)
 void drawSelectedPoint(Image *img, Polygone p)
 {
     Color red = C_new(255, 0, 0);
-    I_plotColor(img, p->points->selected->point.x, p->points->selected->point.y, red);
-
-    I_plotColor(img, p->points->selected->point.x + 1, p->points->selected->point.y, red);
-    I_plotColor(img, p->points->selected->point.x, p->points->selected->point.y + 1, red);
-    I_plotColor(img, p->points->selected->point.x - 1, p->points->selected->point.y, red);
-    I_plotColor(img, p->points->selected->point.x, p->points->selected->point.y - 1, red);
-
-    I_plotColor(img, p->points->selected->point.x + 1, p->points->selected->point.y + 1, red);
-    I_plotColor(img, p->points->selected->point.x - 1, p->points->selected->point.y - 1, red);
-    I_plotColor(img, p->points->selected->point.x - 1, p->points->selected->point.y + 1, red);
-    I_plotColor(img, p->points->selected->point.x + 1, p->points->selected->point.y - 1, red);
-
-    I_plotColor(img, p->points->selected->point.x + 2, p->points->selected->point.y, red);
-    I_plotColor(img, p->points->selected->point.x - 2, p->points->selected->point.y, red);
-    I_plotColor(img, p->points->selected->point.x, p->points->selected->point.y + 2, red);
-    I_plotColor(img, p->points->selected->point.x, p->points->selected->point.y - 2, red);
-    I_plotColor(img, p->points->selected->point.x + 2, p->points->selected->point.y + 1, red);
-    I_plotColor(img, p->points->selected->point.x - 2, p->points->selected->point.y + 1, red);
-    I_plotColor(img, p->points->selected->point.x + 2, p->points->selected->point.y - 1, red);
-    I_plotColor(img, p->points->selected->point.x - 2, p->points->selected->point.y - 1, red);
-    I_plotColor(img, p->points->selected->point.x + 1, p->points->selected->point.y + 2, red);
-    I_plotColor(img, p->points->selected->point.x - 1, p->points->selected->point.y + 2, red);
-    I_plotColor(img, p->points->selected->point.x + 1, p->points->selected->point.y - 2, red);
-    I_plotColor(img, p->points->selected->point.x - 1, p->points->selected->point.y - 2, red);
+    Point point = p->points->selected->point;
+    point.x = p->points->selected->point.x;
+    point.y = p->points->selected->point.y;
+    I_plotColor(img, point.x, point.y, red);
+    int voisins[20][2] = { {point.x+1, point.y},{point.x,point.y+1},{point.x-1,point.y},{point.x,point.y-1},
+                    {point.x+1,point.y+1},{point.x-1,point.y+1},{point.x+1,point.y-1},{point.x-1,point.y-1},
+                    {point.x+2,point.y},{point.x,point.y+2},{point.x-2,point.y},{point.x,point.y-2},
+                    {point.x+2,point.y+1},{point.x-2,point.y+1},{point.x+2,point.y-1},{point.x-2,point.y-1},
+                    {point.x+1,point.y+2},{point.x+1,point.y-2},{point.x-1,point.y+2},{point.x-1,point.y-2} };
+    for(int i = 0; i<20; i++){
+        if(voisins[i][0]>=0 && voisins[i][0]<img->_width && voisins[i][1]>=0 && voisins[i][1]<img->_height)
+            I_plotColor(img, voisins[i][0], voisins[i][1], red);
+    }
 }
 void drawPolygoneBordered(Image *img, Polygone p)
 {
+    Color c = C_new(0, 0, 255);
     ElementListe courant = p->points->premier;
     while (courant->suivant != NULL)
     {
         ElementListe follow = courant->suivant;
-        I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y, C_new(255, 255, 255));
+        I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y, c);
         courant = courant->suivant;
     }
-    I_bresenham(img, p->points->dernier->point.x, p->points->dernier->point.y, p->points->premier->point.x, p->points->premier->point.y, C_new(255, 255, 255));
+    I_bresenham(img, p->points->dernier->point.x, p->points->dernier->point.y, p->points->premier->point.x, p->points->premier->point.y,c);
 }
 void drawPolygoneFilled(Image *img, Polygone p)
 {
     Liste listeIntersections;
+    Color c = C_new(255, 255, 255);
     int ymin = getYmin(p);
     int ymax = getYmax(p);
     for (int y = ymin; y <= ymax; y++)
     {
         listeIntersections = getIntersections(p, y);
-        sortListe(listeIntersections);
-        listeIntersections->dernier->suivant = listeIntersections->premier;
-        for (int i = 0; i < listeIntersections->taille; i += 2)
-        {
-            Point a = listeIntersections->premier->point;
-            Point b = listeIntersections->premier->suivant->point;
-            I_bresenham(img, a.x, a.y, b.x, b.y, C_new(255, 255, 255));
-            listeIntersections->premier = listeIntersections->premier->suivant->suivant;
+        ElementListe courant = listeIntersections->premier;
+        while(courant!=NULL){
+            Point a = courant->point;
+            Point b = b = courant->suivant->point;
+            if(courant->suivant==NULL)
+                printf("ERROR\n");
+            I_bresenham(img, a.x, a.y, b.x, b.y, c);
+            courant = courant->suivant->suivant;
         }
     }
 }
 void drawSelectedEdge(Image *img, Polygone p)
 {
-    Color red = C_new(255, 0, 0);
-    if (p->points->taille > 2)
+    Color c = C_new(255, 0, 0);
+    if (p->points->taille > 1)
     {
         if (p->points->selected->suivant != NULL)
         {
             ElementListe courant = p->points->selected;
             ElementListe follow = courant->suivant;
-            I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y, red);
+            I_bresenham(img, courant->point.x, courant->point.y, follow->point.x, follow->point.y, c);
         }
         else
         {
-            I_bresenham(img, p->points->selected->point.x, p->points->selected->point.y, p->points->premier->point.x, p->points->premier->point.y, red);
+            I_bresenham(img, p->points->selected->point.x, p->points->selected->point.y, p->points->premier->point.x, p->points->premier->point.y, c);
         }
     }
 }
 void drawPolygoneClosed(Image *img, Polygone p)
 {
-    if (p->isFilled)
+    if (p->isFilled && p->points->taille > 2)
         drawPolygoneFilled(img, p);
-    else
-        drawPolygoneBordered(img, p);
+    drawPolygoneBordered(img, p);
 }
 void drawPolygone(Image *img, Polygone p)
 {
     I_fill(img, C_new(0, 0, 0));
-    if (p->isClosed)
-        drawPolygoneClosed(img, p);
-    else
-        drawBrokenLine(img, p);
-    if (p->mode == VERTEX)
-        drawSelectedPoint(img, p);
-    else if (p->mode == EDGE)
-        drawSelectedEdge(img, p);
+    if(p->points->taille != 0){
+        if (p->isClosed)
+            drawPolygoneClosed(img, p);
+        else
+            drawBrokenLine(img, p);
+        if (p->mode == VERTEX)
+            drawSelectedPoint(img, p);
+        else if (p->mode == EDGE)
+            drawSelectedEdge(img, p);
+    }
 }
 void selectNextPoint(Polygone p)
 {
@@ -345,7 +305,6 @@ void selectPointByIndex(Polygone p, int index)
         p->points->selected = courant;
         return;
     }
-    printf("Point non trouve\n");
 }
 void selectLastPoint(Polygone p)
 {
