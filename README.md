@@ -28,20 +28,32 @@ Trouver une structure de données adéquate permettant de représenter les ligne
 ## 5) Sélection par clavier (2p)
 
 Écrire une nouvelle version du programme précédent qui admette trois modes :
-**insert (touche i)** Dans le mode append le programme fonctionne comme auparavant : chaque clique de la souris avec le bouton gauche crée un nouveau sommet et le relie au dernier point crée.
-**vertex (touche v)** Dans le mode vertex, un sommet et un seul est supposé sélectionné. Le sommet sélectionné est visualisé par un signe distinctif (par exemple un petit carré autour du sommet).
+
+**insert (touche i)** 
+
+Dans le mode append le programme fonctionne comme auparavant : chaque clique de la souris avec le bouton gauche crée un nouveau sommet et le relie au dernier point crée.
+
+**vertex (touche v)** 
+
+Dans le mode vertex, un sommet et un seul est supposé sélectionné. Le sommet sélectionné est visualisé par un signe distinctif (par exemple un petit carré autour du sommet).
 — La touche page suivante (respectivement page précédente) permet de sélectionner le sommet suivant (respectivement précédant) le sommet sélectionné.
 — Les touches haut, bas, droite, gauche permettent de déplacer le sommet sélectionné dans la direction correspondante.
 — La touche suppr permet d’éliminer le sommet sélectionné.
-**edge (touche e)** Dans le mode edge, une arête et une seule est supposée sélectionnée. Cette arête est visualisée par un signe distinctif. On peut imaginer qu’elle soit dessinée d’une couleur différente des autres arêtes.
+
+**edge (touche e)** 
+
+Dans le mode edge, une arête et une seule est supposée sélectionnée. Cette arête est visualisée par un signe distinctif. On peut imaginer qu’elle soit dessinée d’une couleur différente des autres arêtes.
 — La touche page suivante (respectivement page précédente) permet de sélectionner l’arête suivant (respectivement précédant) l’arête sélectionnée.
 — un clique avec le bouton du milieu permet de couper l’arête sélectionnée en deux en insérant un nouveau sommet entre ses extrémités.
 
 ## 6) Sélection par souris (2p)
 
 **Sommet le plus proche**
+
 Écrire une fonction *closestVertex* qui, étant donnée une position(x, y)et une ligne brisée ou un polygone fermé, retourne l’indice du sommet le plus proche de (x, y).
+
 **Arête la plus proche**
+
 Écrire une fonction *closestEdge* qui, étant donnée une position(x, y)et une ligne brisée ou un polygone fermé, retourne l’indice de l’arête la plus proche de (x, y).
 
 Écrire une nouvelle version du programme précédent qui réalise les mêmes actions sauf qu’on n’utilise plus les
