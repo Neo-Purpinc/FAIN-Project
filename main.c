@@ -40,7 +40,6 @@ void mouse_CB(int button, int state, int x, int y)
 {
 	if((button==GLUT_LEFT_BUTTON)&&(state==GLUT_DOWN))
 	{
-		I_focusPoint(img,x,img->_height-y);
 		switch(polygone->mode){
 			case INSERT:
 				addVertex(polygone,createPoint(x,img->_height-y));
@@ -56,7 +55,6 @@ void mouse_CB(int button, int state, int x, int y)
 	}
 	else if(button==GLUT_MIDDLE_BUTTON && state==GLUT_DOWN)
 	{
-		I_focusPoint(img,x,img->_height-y);
 		switch(polygone->mode){
 			case EDGE:
 			createPointBetweenTwoPoints(polygone);
@@ -88,9 +86,6 @@ void keyboard_CB(unsigned char key, int x, int y)
 	switch(key)
 	{
 		case 27 : exit(1); break;
-		case 'z' : I_zoom(img,2.0); break;
-		case 'Z' : I_zoom(img,0.5); break;
-		case 'I' : I_zoomInit(img); break;
 		case 'i' : polygone->mode = INSERT; break;
 		case 'v' : 
 			polygone->mode = VERTEX;
@@ -143,22 +138,18 @@ void special_CB(int key, int x, int y)
 	switch(key)
 	{
 	case GLUT_KEY_UP    : 
-		// I_move(img,0,d);
 		if(polygone->mode==VERTEX && polygone->points->selected->point.y+d<img->_height)
 			moveSelectedPoint(polygone,0,d);
 		break;
 	case GLUT_KEY_DOWN  :
-		// I_move(img,0,-d);
 		if(polygone->mode==VERTEX && polygone->points->selected->point.y-d>=0)
 			moveSelectedPoint(polygone,0,-d);
 		break;
 	case GLUT_KEY_LEFT  : 
-		// I_move(img,d,0);
 		if(polygone->mode==VERTEX && polygone->points->selected->point.x-d>=0)
 			moveSelectedPoint(polygone,-d,0);
 		break;
 	case GLUT_KEY_RIGHT :
-		// I_move(img,-d,0);
 		if(polygone->mode==VERTEX && polygone->points->selected->point.x+d<img->_width)
 			moveSelectedPoint(polygone,d,0);
 		break;

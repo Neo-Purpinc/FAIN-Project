@@ -1,63 +1,54 @@
-# Fondements et Algorithmes de l’Imagerie Numérique
+# Compte rendu du Projet FAIN 2021
+## Résultat
 
-# Projet : Saisie et remplissage d’un polygone 2D
+<p align="center"><img src="https://i.gyazo.com/71064dd77d507e56552bbaa478a03086.png" alt="Résultat" width="500"></p>
 
-L’objectif de ce projet est d’écrire un programme en C ou C++ permettant de dessiner un polygone plan et de le remplir.
 
-## 1) Afficher une ligne brisée (2p)
+## Etapes pour arriver à mon image
+1. ./plot 800 800 (Lancement du programme)
+2. Clic gauche (saisie des sommets en commencant en bas à gauche)
 
-Écrire un programme qui, à partir d’un ensemble de coordonnées de points dans le plan (spécifiées directement dans le code source),
-affiche une ligne brisée qui relie ces points par des droites de Bresenham dans l’ordre de leur spécification.
+<p align="center"><img src="https://i.gyazo.com/a952ee4abfb251da0f18e8b03ecae1a6.png" alt="etape2" align="center" width="500"></p>
 
-## 2) Dessin à la souris (2p)
+3. Appui  sur V (Passage en mode VERTEX)
 
-Écrire un programme où chaque clique de la souris ajoute un nouveau sommet en ce point et, le cas échéant, le relie au sommet précédent.
-Lorsqu’on presse la touche ’c’ (comme dans close), la ligne brisée ouverte devient un polygone fermé.
-Lorsqu’on presse de nouveau la touche ’c’, le polygone fermé redevient une ligne brisée ouverte.
+<p align="center"><img src="https://i.gyazo.com/021a60557ca3d45c5b0024b6da28f25b.png" alt="etape3" width="500"></p>
 
-![FIGURE 1](http://url/to/img.png) FIGURE 1 – À gauche, un polygone fermé et, à droite, le même polygone rempli par scanline.
+4. Appui sur Suppr (Suppression du vertex sélectionné)
 
-## 3) Remplissage scan-line (6p)
+<p align="center"><img src="https://i.gyazo.com/e9edce36239bd61a069adecde1bbc101.png" alt="etape4" width="500"></p>
 
-Écrire une nouvelle version du programme précédent qui grâce à la touche ’f’ (comme dans fill) permet de remplir le polygone fermé avec la méthode scanline.
+5. Clic près du vertex supérieur droit (Sélection par clic)
 
-## 4) Insérer et supprimer des sommets (3p)
+<p align="center"><img src="https://i.gyazo.com/f6441d724163372c6d6dd67d2bd57e91.png" alt="etape5" width="500"></p>
 
-Trouver une structure de données adéquate permettant de représenter les lignes brisées et les polygones fermés et qui permette également d’insérer des sommets et d’en supprimer. 
+6. Appui sur Suppr (Suppression du vertex sélectionné)
 
-## 5) Sélection par clavier (2p)
+<p align="center"><img src="https://i.gyazo.com/42dc98aaca706568b638410df7be5cd6.png" alt="etape6" width="500"></p>
 
-Écrire une nouvelle version du programme précédent qui admette trois modes :
+7. Appui sur I (Passage en mode INSERT)
+8. Clic gauche (saisie des sommets)
 
-**insert (touche i)** 
+<p align="center"><img src="https://i.gyazo.com/aa6d016b358d03018cd4869e2ac084dd.png" alt="etape8" width="500"></p>
 
-Dans le mode append le programme fonctionne comme auparavant : chaque clique de la souris avec le bouton gauche crée un nouveau sommet et le relie au dernier point crée.
+9.  Appui sur F (Remplissage scanline)
 
-**vertex (touche v)** 
+<p align="center"><img src="https://i.gyazo.com/71064dd77d507e56552bbaa478a03086.png" alt="etape8" width="500"></p>
 
-Dans le mode vertex, un sommet et un seul est supposé sélectionné. Le sommet sélectionné est visualisé par un signe distinctif (par exemple un petit carré autour du sommet).
-— La touche page suivante (respectivement page précédente) permet de sélectionner le sommet suivant (respectivement précédant) le sommet sélectionné.
-— Les touches haut, bas, droite, gauche permettent de déplacer le sommet sélectionné dans la direction correspondante.
-— La touche suppr permet d’éliminer le sommet sélectionné.
-
-**edge (touche e)** 
-
-Dans le mode edge, une arête et une seule est supposée sélectionnée. Cette arête est visualisée par un signe distinctif. On peut imaginer qu’elle soit dessinée d’une couleur différente des autres arêtes.
-— La touche page suivante (respectivement page précédente) permet de sélectionner l’arête suivant (respectivement précédant) l’arête sélectionnée.
-— un clique avec le bouton du milieu permet de couper l’arête sélectionnée en deux en insérant un nouveau sommet entre ses extrémités.
-
-## 6) Sélection par souris (2p)
-
-**Sommet le plus proche**
-
-Écrire une fonction *closestVertex* qui, étant donnée une position(x, y)et une ligne brisée ou un polygone fermé, retourne l’indice du sommet le plus proche de (x, y).
-
-**Arête la plus proche**
-
-Écrire une fonction *closestEdge* qui, étant donnée une position(x, y)et une ligne brisée ou un polygone fermé, retourne l’indice de l’arête la plus proche de (x, y).
-
-Écrire une nouvelle version du programme précédent qui réalise les mêmes actions sauf qu’on n’utilise plus les
-touches page précédente et page suivante pour changer les sélections.
-— en mode vertex le fait de cliquer avec le bouton gauche revient à sélectionner le sommet le plus proche ;
-— en mode edge le fait de cliquer avec le bouton gauche revient à sélectionner l’arête la plus proche.
-Pour simplifier on admettra que l’arête la plus proche est adjacente au sommet le plus proche.
+## Fonctionnalités du programme
+- Appui sur c
+  - Affiche le polygone fermé si c'est une ligne brisée, sinon affiche la ligne brisée
+- Appui sur f
+  - Affiche le polygone rempli si c'est une ligne brisée ou un polygone fermé, sinon affiche le polygone fermé
+- Appui sur i (Mode INSERT)
+  - Clic gauche (Insertion de sommets)
+- Appui sur v (Mode VERTEX)
+  - Clic gauche (Sélection du sommet le plus proche)
+  - Page Suivante/Précédente (Sélection du sommet suivant/précédant)
+  - Drag and Drop (Déplacement du sommet sélectionné)
+  - Flèches directionnelles (Déplacement du sommet sélectionné)
+  - Suppr (Suppression du sommet sélectionné)
+- Appui sur e (Mode EDGE)
+  - Clic gauche (Sélection de l'arête sortante du sommet le plus proche)
+  - Page Suivante/Précédente (Sélection de l'arête suivante/précédante)
+  - Clic milieu (Insertion d'un sommet au milieu de l'arête sélectionné)

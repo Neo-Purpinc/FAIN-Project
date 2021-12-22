@@ -197,7 +197,8 @@ void drawPolygoneClosed(Image *img, Polygone p)
 {
     if (p->isFilled && p->points->taille > 2)
         drawPolygoneFilled(img, p);
-    drawPolygoneBordered(img, p);
+    else
+        drawPolygoneBordered(img, p);
 }
 void drawPolygone(Image *img, Polygone p)
 {
