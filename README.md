@@ -1,39 +1,39 @@
 # Compte rendu du Projet FAIN 2021
 ## Résultat
 
-<p align="center"><img src="https://i.gyazo.com/71064dd77d507e56552bbaa478a03086.png" alt="Résultat" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/71064dd77d507e56552bbaa478a03086.png" alt="Résultat" width="500"></div>
 
 
 ## Etapes pour arriver à mon image
 1. ./plot 800 800 (Lancement du programme)
 2. Clic gauche (saisie des sommets en commencant en bas à gauche)
 
-<p align="center"><img src="https://i.gyazo.com/a952ee4abfb251da0f18e8b03ecae1a6.png" alt="etape2" align="center" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/a952ee4abfb251da0f18e8b03ecae1a6.png" alt="etape2" align="center" width="500"></div>
 
 3. Appui  sur V (Passage en mode VERTEX)
 
-<p align="center"><img src="https://i.gyazo.com/021a60557ca3d45c5b0024b6da28f25b.png" alt="etape3" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/021a60557ca3d45c5b0024b6da28f25b.png" alt="etape3" width="500"></div>
 
 4. Appui sur Suppr (Suppression du vertex sélectionné)
 
-<p align="center"><img src="https://i.gyazo.com/e9edce36239bd61a069adecde1bbc101.png" alt="etape4" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/e9edce36239bd61a069adecde1bbc101.png" alt="etape4" width="500"></div>
 
 5. Clic près du vertex supérieur droit (Sélection par clic)
 
-<p align="center"><img src="https://i.gyazo.com/f6441d724163372c6d6dd67d2bd57e91.png" alt="etape5" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/f6441d724163372c6d6dd67d2bd57e91.png" alt="etape5" width="500"></div>
 
 6. Appui sur Suppr (Suppression du vertex sélectionné)
 
-<p align="center"><img src="https://i.gyazo.com/42dc98aaca706568b638410df7be5cd6.png" alt="etape6" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/42dc98aaca706568b638410df7be5cd6.png" alt="etape6" width="500"></div>
 
 7. Appui sur I (Passage en mode INSERT)
 8. Clic gauche (saisie des sommets)
 
-<p align="center"><img src="https://i.gyazo.com/aa6d016b358d03018cd4869e2ac084dd.png" alt="etape8" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/aa6d016b358d03018cd4869e2ac084dd.png" alt="etape8" width="500"></div>
 
 9.  Appui sur F (Remplissage scanline)
 
-<p align="center"><img src="https://i.gyazo.com/71064dd77d507e56552bbaa478a03086.png" alt="etape8" width="500"></p>
+<div align="center"><img src="https://i.gyazo.com/71064dd77d507e56552bbaa478a03086.png" alt="etape8" width="500"></div>
 
 ## Fonctionnalités du programme
 - Appui sur c
